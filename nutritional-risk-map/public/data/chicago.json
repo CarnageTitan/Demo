@@ -1,0 +1,94 @@
+{
+  "city": "Chicago, IL",
+  "description": "Synthetic snapshot combining income, transit, store access, and health burden across several Chicago community areas.",
+  "neighborhoods": [
+    {
+      "id": "chi-1",
+      "name": "Near North",
+      "income": 72000,
+      "transportAccess": 0.86,
+      "distanceToGrocery": 0.6,
+      "storeDensity": 4.1,
+      "chronicDiseasePrevalence": 0.12,
+      "population": 42000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-87.648, 41.898],
+            [-87.620, 41.898],
+            [-87.620, 41.915],
+            [-87.648, 41.915],
+            [-87.648, 41.898]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "chi-2",
+      "name": "West Garfield Park",
+      "income": 32500,
+      "transportAccess": 0.55,
+      "distanceToGrocery": 1.8,
+      "storeDensity": 1.3,
+      "chronicDiseasePrevalence": 0.27,
+      "population": 18000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-87.745, 41.877],
+            [-87.720, 41.877],
+            [-87.720, 41.895],
+            [-87.745, 41.895],
+            [-87.745, 41.877]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "chi-3",
+      "name": "South Shore",
+      "income": 36000,
+      "transportAccess": 0.62,
+      "distanceToGrocery": 1.4,
+      "storeDensity": 1.8,
+      "chronicDiseasePrevalence": 0.24,
+      "population": 53000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-87.590, 41.745],
+            [-87.555, 41.745],
+            [-87.555, 41.775],
+            [-87.590, 41.775],
+            [-87.590, 41.745]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "chi-4",
+      "name": "Little Village",
+      "income": 41000,
+      "transportAccess": 0.68,
+      "distanceToGrocery": 1.1,
+      "storeDensity": 2.2,
+      "chronicDiseasePrevalence": 0.20,
+      "population": 73000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-87.720, 41.828],
+            [-87.680, 41.828],
+            [-87.680, 41.855],
+            [-87.720, 41.855],
+            [-87.720, 41.828]
+          ]
+        ]
+      }
+    }
+  ]
+}
