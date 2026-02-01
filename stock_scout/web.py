@@ -15,11 +15,23 @@ from .report import (
     format_report_text,
     report_to_dict,
 )
+from .rank import rank_stocks, rank_to_dict
 from .scrape import ScrapeConfig, build_search_query, scrape_tweets
 
 
 app = FastAPI(title="StockScout")
 DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+
+
+def _env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    try:
+        return int(value) if value is not None else default
+    except ValueError:
+        return default
+
+
+DEFAULT_NEWS_RECORDS = _env_int("NEWS_RECORDS", 10)
 
 
 def _page(content: str, title: str = "StockScout") -> str:
@@ -39,6 +51,10 @@ def _page(content: str, title: str = "StockScout") -> str:
       .actions {{ margin-top: 12px; }}
       .notice {{ background: #f5f5f5; padding: 12px; border-radius: 6px; }}
       pre {{ background: #0b0b0b; color: #f4f4f4; padding: 16px; border-radius: 6px; }}
+      table {{ border-collapse: collapse; width: 100%; max-width: 900px; }}
+      th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
+      th {{ background: #f0f0f0; }}
+      textarea {{ padding: 8px; font-size: 14px; width: 100%; min-height: 80px; }}
       footer {{ margin-top: 24px; font-size: 12px; color: #555; }}
     </style>
   </head>
@@ -58,6 +74,7 @@ def home(request: Request) -> HTMLResponse:
     content = f"""
     <h1>StockScout</h1>
     <p>Scrape Twitter for stock chatter, then summarize with Gemini.</p>
+    <p><a href="/rank">Try free-source stock ranking</a></p>
     <form method="post" action="/analyze">
       <div>
         <label for="ticker">Ticker</label>
@@ -103,6 +120,85 @@ def home(request: Request) -> HTMLResponse:
         <button type="submit">Analyze</button>
       </div>
     </form>
+    """
+    return HTMLResponse(_page(content))
+
+
+@app.get("/rank", response_class=HTMLResponse)
+def rank_form() -> HTMLResponse:
+    content = f"""
+    <h1>StockScout Rankings</h1>
+    <p>Rank US stocks using free sources (SEC filings, Stooq prices, GDELT news).</p>
+    <form method="post" action="/rank">
+      <div>
+        <label for="tickers">Tickers (comma-separated)</label>
+        <textarea id="tickers" name="tickers" placeholder="AAPL, MSFT, AMZN"></textarea>
+      </div>
+      <div class="row">
+        <div>
+          <label for="news_records">News records per ticker</label>
+          <input id="news_records" name="news_records" type="number" min="3" max="30" value="{DEFAULT_NEWS_RECORDS}" />
+        </div>
+      </div>
+      <div class="actions">
+        <button type="submit">Rank</button>
+      </div>
+    </form>
+    """
+    return HTMLResponse(_page(content))
+
+
+@app.post("/rank", response_class=HTMLResponse)
+def rank_submit(
+    tickers: str = Form(...),
+    news_records: int = Form(DEFAULT_NEWS_RECORDS),
+) -> HTMLResponse:
+    items = [item.strip() for item in tickers.split(",") if item.strip()]
+    if not items:
+        return HTMLResponse(_page("<p class='notice'>Provide at least one ticker.</p>"))
+
+    rankings = rank_stocks(items, news_records=max(3, min(news_records, 30)))
+    rows = []
+    for rank in rankings:
+        sig = rank.signals
+        rows.append(
+            "<tr>"
+            f"<td>{html.escape(rank.ticker)}</td>"
+            f"<td>{rank.score}</td>"
+            f"<td>{rank.data_quality}</td>"
+            f"<td>{sig.price_return_6m if sig.price_return_6m is not None else 'N/A'}</td>"
+            f"<td>{sig.price_return_1m if sig.price_return_1m is not None else 'N/A'}</td>"
+            f"<td>{sig.revenue_growth_1y if sig.revenue_growth_1y is not None else 'N/A'}</td>"
+            f"<td>{sig.news_tone if sig.news_tone is not None else 'N/A'}</td>"
+            f"<td>{sig.volatility_3m if sig.volatility_3m is not None else 'N/A'}</td>"
+            "</tr>"
+        )
+    table = """
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Score</th>
+          <th>Data quality</th>
+          <th>Return 6m %</th>
+          <th>Return 1m %</th>
+          <th>Revenue growth 1y %</th>
+          <th>News tone</th>
+          <th>Volatility 3m %</th>
+        </tr>
+      </thead>
+      <tbody>
+    """ + "".join(rows) + """
+      </tbody>
+    </table>
+    """
+    content = f"""
+    <h1>StockScout Rankings</h1>
+    <p><a href="/rank">Run another ranking</a></p>
+    {table}
+    <p class="notice">
+      Scores are heuristic, based on free public data. They are not investment advice.
+    </p>
     """
     return HTMLResponse(_page(content))
 
@@ -209,3 +305,18 @@ def analyze_api(
             )
     report = build_report(ticker_clean, full_query, tweets, assessment, metrics=metrics)
     return JSONResponse(report_to_dict(report))
+
+
+@app.get("/api/rank")
+def rank_api(
+    tickers: str,
+    news_records: int = DEFAULT_NEWS_RECORDS,
+) -> JSONResponse:
+    items = [item.strip() for item in tickers.split(",") if item.strip()]
+    rankings = rank_stocks(items, news_records=max(3, min(news_records, 30)))
+    return JSONResponse(
+        {
+            "rankings": [rank_to_dict(rank) for rank in rankings],
+            "sources": ["SEC EDGAR", "Stooq", "GDELT"],
+        }
+    )

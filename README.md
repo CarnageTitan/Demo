@@ -13,6 +13,7 @@ clear, easy-to-read report (or JSON if you prefer).
 - Quick metrics (engagement, unique users, hashtags)
 - Gemini-based sentiment and risk summary
 - Text or JSON output
+- Free-source ranking (SEC filings, price data, news)
 
 ## Setup
 
@@ -70,6 +71,14 @@ API endpoint:
 GET /api/analyze?ticker=TSLA&limit=50&days=7&use_gemini=true
 ```
 
+Ranking endpoint (free sources):
+
+```
+GET /api/rank?tickers=AAPL,MSFT,AMZN
+```
+
+> Rankings are currently scoped to US tickers (Stooq `.us` symbols + SEC EDGAR).
+
 ### Deploy on Render
 
 1. Create a **Web Service** from this repo.
@@ -88,11 +97,15 @@ GET /api/analyze?ticker=TSLA&limit=50&days=7&use_gemini=true
 - `GEMINI_API_KEY` (required for Gemini assessment)
 - `GOOGLE_API_KEY` (alternative to `GEMINI_API_KEY`)
 - `GEMINI_MODEL` (optional, default: `gemini-1.5-flash`)
+- `SEC_USER_AGENT` (recommended for SEC EDGAR access; include contact email)
+- `NEWS_RECORDS` (optional, default: `10`)
 - `PORT` (Render provides this automatically)
 
 ## Accuracy & Limitations
 
 - This is **not** financial advice. It is a sentiment snapshot based on public tweets.
+- The ranking view uses free public sources (SEC filings, Stooq prices, GDELT news)
+  and a simple heuristic score. Treat it as a starting point, not a decision.
 - Twitter data can include bots, spam, and coordinated campaigns.
 - Scrape results are limited by query size, time window, and rate limits.
 - Gemini summaries can be incomplete or incorrect; treat them as a starting point,
