@@ -101,11 +101,24 @@ GET /api/rank?tickers=AAPL,MSFT,AMZN
 - `NEWS_RECORDS` (optional, default: `10`)
 - `PORT` (Render provides this automatically)
 
+## Scoring Model (Ranking)
+
+The ranking uses a simple multi-factor score:
+
+- **Momentum (35%)**: 6-month + 1-month returns
+- **Fundamentals (40%)**: revenue growth + net margin (from SEC filings)
+- **Risk (15%)**: lower volatility scores higher
+- **Sentiment (10%)**: GDELT news tone
+
+Each factor is normalized across the tickers you submit. The final score is
+the weighted average of available factors; the `data_quality` field shows how
+much of the model had usable data (0–1).
+
 ## Accuracy & Limitations
 
 - This is **not** financial advice. It is a sentiment snapshot based on public tweets.
-- The ranking view uses free public sources (SEC filings, Stooq prices, GDELT news)
-  and a simple heuristic score. Treat it as a starting point, not a decision.
+- The ranking uses free public sources (SEC filings, Stooq prices, GDELT news)
+  and a heuristic score. Treat it as a starting point, not a decision.
 - Twitter data can include bots, spam, and coordinated campaigns.
 - Scrape results are limited by query size, time window, and rate limits.
 - Gemini summaries can be incomplete or incorrect; treat them as a starting point,

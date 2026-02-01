@@ -161,14 +161,20 @@ def rank_submit(
     rows = []
     for rank in rankings:
         sig = rank.signals
+        factors = rank.factors
         rows.append(
             "<tr>"
             f"<td>{html.escape(rank.ticker)}</td>"
             f"<td>{rank.score}</td>"
             f"<td>{rank.data_quality}</td>"
+            f"<td>{factors.momentum if factors.momentum is not None else 'N/A'}</td>"
+            f"<td>{factors.fundamentals if factors.fundamentals is not None else 'N/A'}</td>"
+            f"<td>{factors.risk if factors.risk is not None else 'N/A'}</td>"
+            f"<td>{factors.sentiment if factors.sentiment is not None else 'N/A'}</td>"
             f"<td>{sig.price_return_6m if sig.price_return_6m is not None else 'N/A'}</td>"
             f"<td>{sig.price_return_1m if sig.price_return_1m is not None else 'N/A'}</td>"
             f"<td>{sig.revenue_growth_1y if sig.revenue_growth_1y is not None else 'N/A'}</td>"
+            f"<td>{sig.net_margin_1y if sig.net_margin_1y is not None else 'N/A'}</td>"
             f"<td>{sig.news_tone if sig.news_tone is not None else 'N/A'}</td>"
             f"<td>{sig.volatility_3m if sig.volatility_3m is not None else 'N/A'}</td>"
             "</tr>"
@@ -180,9 +186,14 @@ def rank_submit(
           <th>Ticker</th>
           <th>Score</th>
           <th>Data quality</th>
+          <th>Momentum</th>
+          <th>Fundamentals</th>
+          <th>Risk</th>
+          <th>Sentiment</th>
           <th>Return 6m %</th>
           <th>Return 1m %</th>
           <th>Revenue growth 1y %</th>
+          <th>Net margin 1y %</th>
           <th>News tone</th>
           <th>Volatility 3m %</th>
         </tr>
