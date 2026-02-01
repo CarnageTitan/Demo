@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from typing import Optional
 
@@ -9,7 +10,7 @@ from .report import build_report, compute_metrics, format_report_json, format_re
 from .scrape import ScrapeConfig, build_search_query, scrape_tweets
 
 
-DEFAULT_MODEL = "gemini-1.5-flash"
+DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
 
 def _build_default_term(ticker: str) -> str:

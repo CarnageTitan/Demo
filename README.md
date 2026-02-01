@@ -28,7 +28,7 @@ Set your Gemini API key:
 export GEMINI_API_KEY="your_api_key_here"
 ```
 
-## Usage
+## Usage (CLI)
 
 Basic usage:
 
@@ -53,6 +53,50 @@ Custom query:
 ```bash
 python -m stock_scout --ticker META --query '(META OR $META OR "Meta stock")'
 ```
+
+## Web App
+
+Run locally:
+
+```bash
+uvicorn stock_scout.web:app --host 0.0.0.0 --port 8000
+```
+
+Then open `http://localhost:8000`.
+
+API endpoint:
+
+```
+GET /api/analyze?ticker=TSLA&limit=50&days=7&use_gemini=true
+```
+
+### Deploy on Render
+
+1. Create a **Web Service** from this repo.
+2. Build command:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Start command:
+   ```bash
+   uvicorn stock_scout.web:app --host 0.0.0.0 --port $PORT
+   ```
+4. Add your environment variables (see below).
+
+## Environment Variables
+
+- `GEMINI_API_KEY` (required for Gemini assessment)
+- `GOOGLE_API_KEY` (alternative to `GEMINI_API_KEY`)
+- `GEMINI_MODEL` (optional, default: `gemini-1.5-flash`)
+- `PORT` (Render provides this automatically)
+
+## Accuracy & Limitations
+
+- This is **not** financial advice. It is a sentiment snapshot based on public tweets.
+- Twitter data can include bots, spam, and coordinated campaigns.
+- Scrape results are limited by query size, time window, and rate limits.
+- Gemini summaries can be incomplete or incorrect; treat them as a starting point,
+  not a decision.
 
 ## Notes
 
