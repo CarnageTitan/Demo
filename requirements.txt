@@ -1,0 +1,5 @@
+snscrape
+google-generativeai
+fastapi
+uvicorn
+python-multipart
