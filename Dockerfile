@@ -10,4 +10,4 @@ COPY . .
 EXPOSE 5000
 ENV PORT=5000
 
-CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:${PORT:-5000} --workers 1 --threads 2 --timeout 120"]
+CMD ["sh", "-c", "python -m gunicorn app:app --bind 0.0.0.0:${PORT:-5000} --workers 1 --threads 2 --timeout 120"]

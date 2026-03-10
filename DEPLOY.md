@@ -11,7 +11,7 @@ Render is using **Node.js** but this project is **Python**. You must switch to *
    - **Environment** → Change from "Node" to **"Docker"**
    - **Dockerfile Path** → `./Dockerfile` (or leave blank if it finds it)
    - **Build Command** → `true`
-   - **Start Command** → `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
+   - **Start Command** → `python -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
 5. Click **Save Changes**
 6. Go to **Manual Deploy** → **Deploy latest commit**
 
@@ -34,7 +34,7 @@ Render is using **Node.js** but this project is **Python**. You must switch to *
 2. Connect repo, select branch
 3. **Environment** → **Docker** (important!)
 4. **Build Command** → `true`
-5. **Start Command** (or Docker Command) → `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
+5. **Start Command** (or Docker Command) → `python -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
 6. Create Web Service
 
 ---

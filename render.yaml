@@ -4,4 +4,4 @@ services:
     env: docker
     dockerfilePath: ./Dockerfile
     buildCommand: "true"
-    dockerCommand: "gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120"
+    dockerCommand: "python -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120"
