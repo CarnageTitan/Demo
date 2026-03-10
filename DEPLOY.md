@@ -33,8 +33,9 @@ Render is using **Node.js** but this project is **Python**. You must switch to *
 1. **New** → **Web Service**
 2. Connect repo, select branch
 3. **Environment** → **Docker** (important!)
-4. Leave Build/Start commands empty (Dockerfile handles it)
-5. Create Web Service
+4. **Build Command** → `true`
+5. **Start Command** (or Docker Command) → `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
+6. Create Web Service
 
 ---
 
