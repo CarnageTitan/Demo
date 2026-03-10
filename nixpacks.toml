@@ -1,0 +1,5 @@
+# Force Render to use Python (not Node.js)
+providers = ["python"]
+
+[python]
+version = "3.12"

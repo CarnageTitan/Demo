@@ -1,0 +1,5 @@
+services:
+  - type: web
+    name: quant-trading-model
+    env: docker
+    dockerfilePath: ./Dockerfile

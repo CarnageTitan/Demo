@@ -55,15 +55,36 @@ python run_model.py --period 2y
 
 **FactSet**: If you have FactSet access, you can add a `data_fetcher_factset.py` module that fetches from the FactSet API and plug it into the same scoring pipeline in `quant_model.py`.
 
+## Web App (Render)
+
+```bash
+# Local
+pip install -r requirements.txt
+python app.py
+# Open http://localhost:5000
+
+# Deploy to Render
+# 1. Push to GitHub
+# 2. Connect repo at render.com → New Web Service
+# 3. Build: pip install -r requirements.txt
+# 4. Start: gunicorn app:app --bind 0.0.0.0:$PORT
+```
+
+Or use `render.yaml` for Blueprint deploy.
+
 ## Project Structure
 
 ```
-├── run_model.py      # Main entry point
+├── app.py            # Web app entry (Flask)
+├── model_runner.py   # Reusable model logic for web/CLI
+├── run_model.py      # CLI entry point
 ├── requirements.txt
-├── README.md
+├── render.yaml       # Render deployment
+├── templates/
+│   └── index.html    # Web UI
 └── src/
-    ├── data_fetcher.py   # Fetch from yfinance / Alpha Vantage
-    └── quant_model.py    # Scoring logic (value, momentum, RSI, volume)
+    ├── data_fetcher.py
+    └── quant_model.py
 ```
 
 ## Disclaimer

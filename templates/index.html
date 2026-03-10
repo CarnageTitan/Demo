@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quant Trading Model</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --yellow: #d29922;
+      --red: #f85149;
+    }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem; }
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+    }
+    input[type="text"]::placeholder { color: var(--text-muted); }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .form-group { flex: 1; min-width: 140px; }
+    .form-group input { width: 100%; }
+    button {
+      padding: 0.75rem 1.5rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+    .spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error {
+      background: rgba(248, 81, 73, 0.15);
+      border: 1px solid var(--red);
+      color: var(--red);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .results-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th {
+      text-align: left;
+      padding: 1rem 1.25rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .symbol { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 1rem; }
+    .signal {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .signal-strong { background: rgba(63, 185, 80, 0.2); color: var(--green); }
+    .signal-buy { background: rgba(88, 166, 255, 0.2); color: var(--accent); }
+    .signal-hold { background: rgba(210, 153, 34, 0.2); color: var(--yellow); }
+    .signal-weak { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+    .pos { color: var(--green); }
+    .neg { color: var(--red); }
+    .details-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.6rem;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .details-btn:hover { color: var(--text); border-color: var(--text-muted); }
+    .factor-row {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+    .factor-row.open { display: block; }
+    .factor-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .factor-box {
+      background: var(--bg);
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .factor-box .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+    .factor-box .val { font-family: 'JetBrains Mono', monospace; font-weight: 600; margin-top: 0.25rem; }
+    .model-info {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    .model-info h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+    .model-info p { color: var(--text-muted); font-size: 0.9rem; }
+    .model-info ul { margin-top: 0.5rem; margin-left: 1.25rem; color: var(--text-muted); font-size: 0.9rem; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    @media (max-width: 700px) {
+      .factor-grid { grid-template-columns: repeat(2, 1fr); }
+      .hide-mobile { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Quant Trading Model</h1>
+      <p class="subtitle">Value · Momentum · RSI · Volume factors · Powered by yfinance</p>
+    </header>
+
+    <form class="form-card" method="post" action="/analyze" id="analyze-form">
+      <label for="tickers">Tickers (comma-separated, or leave blank for default watchlist)</label>
+      <input type="text" id="tickers" name="tickers" value="{{ watchlist }}" placeholder="e.g. AAPL, MSFT, GOOGL, NVDA">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="top">Show top</label>
+          <input type="number" id="top" name="top" value="25" min="5" max="50">
+        </div>
+        <div class="form-group">
+          <label for="min_score">Min score (0–100)</label>
+          <input type="number" id="min_score" name="min_score" value="0" min="0" max="100" step="5">
+        </div>
+        <button type="submit" id="submit-btn">Analyze</button>
+      </div>
+    </form>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    {% if results %}
+    <div class="results-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Score</th>
+            <th>Signal</th>
+            <th>Price</th>
+            <th class="hide-mobile">P/E</th>
+            <th>1M %</th>
+            <th class="hide-mobile">RSI</th>
+            <th>Factors</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in results %}
+          <tr>
+            <td class="symbol">{{ r.symbol }}</td>
+            <td>{{ "%.1f"|format(r.total_score or 0) }}</td>
+            <td>
+              <span class="signal {% if r.signal == 'STRONG BUY' %}signal-strong{% elif r.signal == 'BUY' %}signal-buy{% elif r.signal == 'HOLD' %}signal-hold{% else %}signal-weak{% endif %}">{{ r.signal or '—' }}</span>
+            </td>
+            <td>{% if r.price %}${"{:.2f}".format(r.price)}{% else %}—{% endif %}</td>
+            <td class="hide-mobile">{{ "%.1f"|format(r.pe_ratio) if r.pe_ratio else "—" }}</td>
+            <td>
+              {% if r.momentum_1m_pct is not none %}
+              <span class="{{ 'pos' if r.momentum_1m_pct >= 0 else 'neg' }}">{{ "%+.1f"|format(r.momentum_1m_pct) }}%</span>
+              {% else %}—{% endif %}
+            </td>
+            <td class="hide-mobile">{{ "%.0f"|format(r.rsi) if r.rsi is not none else "—" }}</td>
+            <td>
+              <button type="button" class="details-btn" onclick="toggleRow(this)">Details</button>
+            </td>
+          </tr>
+          <tr class="factor-row" id="factors-{{ r.symbol }}">
+            <td colspan="8" style="padding: 1rem 1.25rem;">
+              <strong>Quant model breakdown for {{ r.symbol }}</strong>
+              <div class="factor-grid">
+                <div class="factor-box">
+                  <div class="label">Value (35%)</div>
+                  <div class="val">{{ "%.1f"|format(r.value_score or 0) }}</div>
+                  <div class="label">P/E, P/B, dividend</div>
+                </div>
+                <div class="factor-box">
+                  <div class="label">Momentum (35%)</div>
+                  <div class="val">{{ "%.1f"|format(r.momentum_score or 0) }}</div>
+                  <div class="label">1m, 3m, 6m returns</div>
+                </div>
+                <div class="factor-box">
+                  <div class="label">RSI (15%)</div>
+                  <div class="val">{{ "%.1f"|format(r.rsi_score or 0) }}</div>
+                  <div class="label">Overbought/oversold</div>
+                </div>
+                <div class="factor-box">
+                  <div class="label">Volume (15%)</div>
+                  <div class="val">{{ "%.1f"|format(r.volume_score or 0) }}</div>
+                  <div class="label">Volume trend</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="model-info">
+      <h3>About the model</h3>
+      <p>Stocks are scored 0–100 using four factors:</p>
+      <ul>
+        <li><strong>Value (35%)</strong> — P/E, P/B ratios, dividend yield. Lower P/E and P/B = higher score.</li>
+        <li><strong>Momentum (35%)</strong> — Price momentum over 1m, 3m, 6m. Positive momentum = higher score.</li>
+        <li><strong>RSI (15%)</strong> — Relative Strength Index. Oversold (&lt;30) = potential buy; overbought (&gt;70) = caution.</li>
+        <li><strong>Volume (15%)</strong> — Increasing volume suggests growing interest.</li>
+      </ul>
+      <p style="margin-top: 0.75rem;">Signals: <strong>STRONG BUY</strong> ≥70 · <strong>BUY</strong> ≥60 · <strong>HOLD</strong> ≥50 · <strong>WEAK</strong> &lt;50</p>
+    </div>
+    {% endif %}
+
+    <footer>
+      For research and education only. Not financial advice. Data via yfinance (Yahoo Finance).
+    </footer>
+  </div>
+
+  <script>
+    function toggleRow(btn) {
+      const row = btn.closest('tr');
+      const next = row.nextElementSibling;
+      if (next && next.classList.contains('factor-row')) {
+        next.classList.toggle('open');
+        btn.textContent = next.classList.contains('open') ? 'Hide' : 'Details';
+      }
+    }
+
+    document.getElementById('analyze-form').addEventListener('submit', function() {
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Analyzing…';
+    });
+  </script>
+</body>
+</html>
