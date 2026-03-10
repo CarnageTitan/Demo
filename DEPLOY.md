@@ -1,57 +1,59 @@
 # Deploy to Render
 
-This project uses **Python** and must run with **Docker**. Render often cannot switch from Node to Docker on an existing service—**delete and recreate** is usually required.
+## Change Runtime Without Creating a New Service
+
+Render doesn't let you change Node → Python in the Dashboard, but you can do it via **Blueprint sync** or the **API**.
 
 ---
 
-## How to Change to Docker (or Create New)
+### Method 1: Blueprint Sync (if your service came from a Blueprint)
 
-### If you can edit the existing service
-
-1. Go to [dashboard.render.com](https://dashboard.render.com)
-2. Click your Web Service
-3. Click **Settings** (left sidebar)
-4. Scroll to **Build & Deploy**
-5. Look for **Environment**, **Runtime**, or **Language**
-6. Change it from **Node** to **Docker**
-7. Set **Build Command** → `true`
-8. Set **Start Command** → `python -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
-9. **Save** and **Manual Deploy**
-
-### If Environment/Runtime is greyed out or missing
-
-Render usually does not allow changing from Node to Docker on an existing service. Create a new service instead.
+1. Push the latest code (includes `render.yaml` with `env: python`)
+2. Go to [dashboard.render.com](https://dashboard.render.com)
+3. Open your **Blueprint** (the parent of your service)
+4. Click **Sync** or **Apply**
+5. The service will update to Python and redeploy
 
 ---
 
-## Option A: New Service from Blueprint (recommended)
+### Method 2: Render API
 
-1. Delete your current Web Service (Dashboard → Service → Settings → Delete Web Service)
-2. Click **New +** → **Blueprint**
-3. Connect your GitHub repo
-4. Select branch: **cursor/quant-trading-model-ae7f** (or main)
-5. Render reads `render.yaml` and creates a Docker service
-6. Click **Apply**
+1. Get your **API key**: [dashboard.render.com](https://dashboard.render.com) → **Account Settings** → **API Keys** → Create
+2. Get your **service ID**: Dashboard → Your Service → Settings → check the URL, e.g. `.../services/srv-xxxxx`
+3. Run this (replace `YOUR_API_KEY` and `srv-xxxxx`):
+
+```bash
+curl -X PATCH "https://api.render.com/v1/services/srv-xxxxx" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceDetails": {
+      "runtime": "python",
+      "buildCommand": "pip install -r requirements.txt",
+      "startCommand": "gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120"
+    }
+  }'
+```
+
+4. Trigger a deploy: Dashboard → Manual Deploy
 
 ---
 
-## Option B: New Web Service (manual)
+### Method 3: If you can edit Build/Start in the Dashboard
 
-1. Click **New +** → **Web Service**
-2. Connect your GitHub repo
-3. Select branch: **cursor/quant-trading-model-ae7f**
-4. **Name**: `quant-trading-model` (or any name)
-5. **Region**: Choose closest to you
-6. **Root Directory**: leave blank
-7. **Runtime** or **Environment** → **Docker**
-8. **Build Command** → `true`
-9. **Start Command** → `python -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
-10. Click **Create Web Service**
+Some Render setups let you change build/start commands even when Runtime is locked. Try:
+
+1. **Settings** → **Build & Deploy**
+2. **Build Command** → `pip install -r requirements.txt`
+3. **Start Command** → `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
+4. **Save** and **Manual Deploy**
+
+If Render still runs `npm install` first (Node build), this won't work—use Method 1 or 2.
 
 ---
 
 ## Start command (copy-paste)
 
 ```
-python -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
+gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
 ```
