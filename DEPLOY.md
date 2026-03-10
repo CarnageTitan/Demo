@@ -10,8 +10,8 @@ Render is using **Node.js** but this project is **Python**. You must switch to *
 4. Under **Build & Deploy**:
    - **Environment** → Change from "Node" to **"Docker"**
    - **Dockerfile Path** → `./Dockerfile` (or leave blank if it finds it)
-   - Clear **Build Command** (leave empty)
-   - Clear **Start Command** (Docker uses the Dockerfile's CMD)
+   - **Build Command** → `true` (no-op; Dockerfile does the real build)
+   - **Start Command** → leave empty (Dockerfile CMD runs the app)
 5. Click **Save Changes**
 6. Go to **Manual Deploy** → **Deploy latest commit**
 
