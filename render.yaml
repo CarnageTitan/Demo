@@ -3,5 +3,5 @@ services:
     name: quant-trading-model
     env: docker
     dockerfilePath: ./Dockerfile
-    # Docker builds from Dockerfile; use no-op if build command field is required
     buildCommand: "true"
+    dockerCommand: "gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120"

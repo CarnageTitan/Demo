@@ -10,8 +10,8 @@ Render is using **Node.js** but this project is **Python**. You must switch to *
 4. Under **Build & Deploy**:
    - **Environment** → Change from "Node" to **"Docker"**
    - **Dockerfile Path** → `./Dockerfile` (or leave blank if it finds it)
-   - **Build Command** → `true` (no-op; Dockerfile does the real build)
-   - **Start Command** → leave empty (Dockerfile CMD runs the app)
+   - **Build Command** → `true`
+   - **Start Command** → `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
 5. Click **Save Changes**
 6. Go to **Manual Deploy** → **Deploy latest commit**
 
