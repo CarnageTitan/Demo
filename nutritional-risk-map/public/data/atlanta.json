@@ -1,0 +1,94 @@
+{
+  "city": "Atlanta, GA",
+  "description": "Illustrative dataset reflecting transportation gaps and limited healthy food outlets across selected Atlanta neighborhoods.",
+  "neighborhoods": [
+    {
+      "id": "atl-1",
+      "name": "Buckhead",
+      "income": 85000,
+      "transportAccess": 0.78,
+      "distanceToGrocery": 0.5,
+      "storeDensity": 3.8,
+      "chronicDiseasePrevalence": 0.10,
+      "population": 58000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-84.390, 33.830],
+            [-84.360, 33.830],
+            [-84.360, 33.860],
+            [-84.390, 33.860],
+            [-84.390, 33.830]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "atl-2",
+      "name": "West End",
+      "income": 34000,
+      "transportAccess": 0.52,
+      "distanceToGrocery": 1.9,
+      "storeDensity": 1.1,
+      "chronicDiseasePrevalence": 0.26,
+      "population": 22000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-84.445, 33.725],
+            [-84.405, 33.725],
+            [-84.405, 33.755],
+            [-84.445, 33.755],
+            [-84.445, 33.725]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "atl-3",
+      "name": "Old Fourth Ward",
+      "income": 52000,
+      "transportAccess": 0.73,
+      "distanceToGrocery": 1.0,
+      "storeDensity": 2.5,
+      "chronicDiseasePrevalence": 0.18,
+      "population": 18000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-84.390, 33.750],
+            [-84.360, 33.750],
+            [-84.360, 33.780],
+            [-84.390, 33.780],
+            [-84.390, 33.750]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "atl-4",
+      "name": "South DeKalb",
+      "income": 38000,
+      "transportAccess": 0.48,
+      "distanceToGrocery": 2.3,
+      "storeDensity": 0.9,
+      "chronicDiseasePrevalence": 0.29,
+      "population": 64000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-84.280, 33.680],
+            [-84.220, 33.680],
+            [-84.220, 33.720],
+            [-84.280, 33.720],
+            [-84.280, 33.680]
+          ]
+        ]
+      }
+    }
+  ]
+}

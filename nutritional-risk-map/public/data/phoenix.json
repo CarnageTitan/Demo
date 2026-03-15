@@ -1,0 +1,94 @@
+{
+  "city": "Phoenix, AZ",
+  "description": "Sample Phoenix neighborhoods emphasizing sprawl-related access barriers and heat-vulnerable populations.",
+  "neighborhoods": [
+    {
+      "id": "phx-1",
+      "name": "Downtown Core",
+      "income": 48000,
+      "transportAccess": 0.75,
+      "distanceToGrocery": 0.7,
+      "storeDensity": 3.0,
+      "chronicDiseasePrevalence": 0.17,
+      "population": 36000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-112.090, 33.435],
+            [-112.070, 33.435],
+            [-112.070, 33.460],
+            [-112.090, 33.460],
+            [-112.090, 33.435]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "phx-2",
+      "name": "Maryvale",
+      "income": 31000,
+      "transportAccess": 0.44,
+      "distanceToGrocery": 2.6,
+      "storeDensity": 0.8,
+      "chronicDiseasePrevalence": 0.31,
+      "population": 79000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-112.220, 33.465],
+            [-112.170, 33.465],
+            [-112.170, 33.510],
+            [-112.220, 33.510],
+            [-112.220, 33.465]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "phx-3",
+      "name": "South Mountain",
+      "income": 38000,
+      "transportAccess": 0.58,
+      "distanceToGrocery": 1.7,
+      "storeDensity": 1.4,
+      "chronicDiseasePrevalence": 0.24,
+      "population": 52000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-112.095, 33.360],
+            [-112.040, 33.360],
+            [-112.040, 33.400],
+            [-112.095, 33.400],
+            [-112.095, 33.360]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "phx-4",
+      "name": "Desert View",
+      "income": 67000,
+      "transportAccess": 0.62,
+      "distanceToGrocery": 1.2,
+      "storeDensity": 2.0,
+      "chronicDiseasePrevalence": 0.15,
+      "population": 48000,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-112.020, 33.700],
+            [-111.980, 33.700],
+            [-111.980, 33.740],
+            [-112.020, 33.740],
+            [-112.020, 33.700]
+          ]
+        ]
+      }
+    }
+  ]
+}
