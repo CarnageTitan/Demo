@@ -12,8 +12,8 @@ Supported sites (content script runs on):
 - perplexity.ai
 
 How it works:
-- The extension does not compute confidence scores. It inserts text into the chat input so the model self-reports confidence and caveats.
-- Use "Append confidence request" before you send a question, or "Insert self-grade prompt" after a reply to ask the model to grade its previous message.
-- Customize the appended suffix under Extension options (puzzle icon → AI Self-Grade Assistant → options).
+- The extension cannot see your files or videos. It only inserts prompts so the model states whether it actually accessed attachments and flags ungrounded or fabricated details.
+- Panel actions: "Append full epistemic + confidence block" (before your question), "Insert media / file access check" (short block focused on video/audio/PDF honesty), "Insert self-grade + fabrication audit" (after a reply you distrust).
+- Options page: edit all three snippets or reset to defaults (puzzle icon → AI Self-Grade Assistant → options).
 
 Note: Some chat UIs use shadow DOM for the input; if the panel says it cannot find the input, click inside the chat box first or the site may have changed its markup.

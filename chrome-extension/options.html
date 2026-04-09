@@ -47,6 +47,16 @@
       button:hover {
         background: #4338ca;
       }
+      button.secondary {
+        margin-left: 8px;
+        background: #64748b;
+      }
+      button.secondary:hover {
+        background: #475569;
+      }
+      label:not(:first-of-type) {
+        margin-top: 20px;
+      }
       #status {
         margin-top: 12px;
         font-size: 13px;
@@ -57,13 +67,19 @@
   <body>
     <h1>AI Self-Grade Assistant</h1>
     <p class="hint">
-      The extension cannot know a true confidence score by itself. The text below is appended to your composer so the
-      <strong>model</strong> reports calibrated confidence and caveats.
+      The extension cannot verify files or videos. These snippets only ask the <strong>model</strong> to state what it
+      actually accessed and to flag ungrounded details—still not a guarantee against fabrication.
     </p>
-    <label for="suffix">Text appended by “Append confidence request”</label>
-    <textarea id="suffix" spellcheck="true"></textarea>
+    <label for="suffix">“Append confidence request” — appended to composer</label>
+    <textarea id="suffix" spellcheck="true" rows="14"></textarea>
+    <label for="selfGrade">“Insert self-grade prompt” — full message body</label>
+    <textarea id="selfGrade" spellcheck="true" rows="12"></textarea>
+    <label for="mediaCheck">“Insert media/file check” — appended to composer</label>
+    <textarea id="mediaCheck" spellcheck="true" rows="8"></textarea>
     <button type="button" id="save">Save</button>
+    <button type="button" id="reset" class="secondary">Reset all to defaults</button>
     <p id="status"></p>
+    <script src="shared/defaults.js"></script>
     <script src="options.js"></script>
   </body>
 </html>

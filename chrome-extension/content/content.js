@@ -2,11 +2,20 @@
   const ROOT_ID = "ai-selfgrade-root";
   const PANEL_ID = "ai-selfgrade-panel";
 
-  const DEFAULT_SUFFIX =
-    "\n\n---\nBefore you answer: for each major factual claim, add a short tag in parentheses: (confidence: High | Medium | Low). After your answer, add a section titled \"Self-assessment\" with: (1) an overall confidence score from 0–100 for how well-supported your answer is, (2) up to three specific caveats or unknowns, and (3) anything a user should verify independently.";
-
-  const DEFAULT_SELF_GRADE_PROMPT =
-    "You are reviewing your immediately previous assistant message in this thread (the user's last question is context). Respond only with a structured self-grade:\n\n1) Overall confidence: a number from 0–100 (calibrated: lower if you might be wrong or lack sources).\n2) Uncertainty: bullet list of what you are least sure about.\n3) Hallucination check: list any concrete claims that might be wrong or unverifiable from your training; say \"none identified\" if truly none.\n4) What would change your answer: one short paragraph.\n\nBe concise. Do not repeat the full prior answer unless needed for clarity.";
+  function getDefaults() {
+    const D = typeof ASG_DEFAULTS !== "undefined" ? ASG_DEFAULTS : {};
+    return {
+      suffixTemplate:
+        D.suffixTemplate ||
+        "\n\n---\nAsk for calibrated confidence and a short Self-assessment after your answer.",
+      selfGradeTemplate:
+        D.selfGradeTemplate ||
+        "Review your previous assistant message: confidence 0–100, caveats, hallucination check.",
+      mediaCheckTemplate:
+        D.mediaCheckTemplate ||
+        "\n\n---\nState whether you actually processed the user’s attachment; if not, do not describe its contents.",
+    };
+  }
 
   const HOST_HINTS = {
     "chatgpt.com": { composer: ["#prompt-textarea", "textarea[data-id]", "textarea[placeholder]"] },
@@ -145,10 +154,22 @@
   }
 
   function loadSettings() {
+    const def = getDefaults();
     return new Promise((resolve) => {
-      chrome.storage.sync.get({ suffixTemplate: DEFAULT_SUFFIX }, (items) => {
-        resolve({ suffixTemplate: items.suffixTemplate || DEFAULT_SUFFIX });
-      });
+      chrome.storage.sync.get(
+        {
+          suffixTemplate: def.suffixTemplate,
+          selfGradeTemplate: def.selfGradeTemplate,
+          mediaCheckTemplate: def.mediaCheckTemplate,
+        },
+        (items) => {
+          resolve({
+            suffixTemplate: items.suffixTemplate || def.suffixTemplate,
+            selfGradeTemplate: items.selfGradeTemplate || def.selfGradeTemplate,
+            mediaCheckTemplate: items.mediaCheckTemplate || def.mediaCheckTemplate,
+          });
+        }
+      );
     });
   }
 
@@ -166,10 +187,11 @@
         <button type="button" class="asg-toggle" id="asg-collapse" aria-expanded="true">Hide</button>
       </div>
       <div class="asg-body">
-        <p class="asg-note">Scores come from the model only after you send the prompt—this extension does not grade answers itself.</p>
+        <p class="asg-note">Snippets ask the model to disclose access limits and ungrounded claims—they cannot verify your files. Use before sending questions or after a suspicious reply.</p>
         <div class="asg-actions">
-          <button type="button" class="asg-btn asg-btn-primary" id="asg-insert-suffix">Append confidence request to composer</button>
-          <button type="button" class="asg-btn" id="asg-self-grade">Insert self-grade prompt (uses last detected reply)</button>
+          <button type="button" class="asg-btn asg-btn-primary" id="asg-insert-suffix">Append full epistemic + confidence block</button>
+          <button type="button" class="asg-btn" id="asg-media-check">Insert media / file access check</button>
+          <button type="button" class="asg-btn" id="asg-self-grade">Insert self-grade + fabrication audit</button>
         </div>
         <p class="asg-label">Last detected assistant excerpt</p>
         <pre class="asg-preview" id="asg-preview">—</pre>
@@ -228,10 +250,26 @@
       status.textContent = "Appended. Send your message when ready.";
     });
 
+    panel.querySelector("#asg-media-check").addEventListener("click", async () => {
+      const status = panel.querySelector("#asg-status");
+      status.textContent = "";
+      status.classList.remove("asg-err");
+      const { mediaCheckTemplate } = await loadSettings();
+      const composer = findComposer();
+      if (!composer) {
+        status.textContent = "Could not find the chat input.";
+        status.classList.add("asg-err");
+        return;
+      }
+      setComposerValue(composer, mediaCheckTemplate);
+      status.textContent = "Media check appended. Send as part of your next message.";
+    });
+
     panel.querySelector("#asg-self-grade").addEventListener("click", async () => {
       const status = panel.querySelector("#asg-status");
       status.textContent = "";
       status.classList.remove("asg-err");
+      const { selfGradeTemplate } = await loadSettings();
       const excerpt = getLastAssistantExcerpt(6000);
       const composer = findComposer();
       if (!composer) {
@@ -239,16 +277,13 @@
         status.classList.add("asg-err");
         return;
       }
-      let block = DEFAULT_SELF_GRADE_PROMPT;
+      let block = selfGradeTemplate;
       if (excerpt) {
-        block =
-          DEFAULT_SELF_GRADE_PROMPT +
-          "\n\n---\nExcerpt of your last reply (may be truncated):\n" +
-          excerpt;
+        block = selfGradeTemplate + "\n\n---\nExcerpt of your last reply (may be truncated):\n" + excerpt;
       } else {
         block =
-          DEFAULT_SELF_GRADE_PROMPT +
-          "\n\n(I could not detect your last reply in the page DOM; still self-grade your previous message in this thread.)";
+          selfGradeTemplate +
+          "\n\n(I could not detect your last reply in the page DOM; still audit your previous message in this thread.)";
       }
       setComposerValue(composer, "\n\n" + block);
       status.textContent = "Inserted self-grade prompt. Send it as your next message.";
@@ -257,7 +292,7 @@
     function refreshPreview() {
       const ex = getLastAssistantExcerpt(800);
       const pre = panel.querySelector("#asg-preview");
-      pre.textContent = ex || "— none detected; self-grade prompt still asks the model to grade its prior reply.";
+      pre.textContent = ex || "— none detected; self-grade prompt still asks the model to audit its prior reply.";
     }
     refreshPreview();
     const obs = new MutationObserver(() => refreshPreview());
