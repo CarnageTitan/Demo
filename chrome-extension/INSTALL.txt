@@ -1,0 +1,19 @@
+AI Self-Grade Assistant — load in Chrome
+
+1. Open chrome://extensions
+2. Turn on "Developer mode"
+3. Click "Load unpacked"
+4. Select this folder: chrome-extension (the one containing manifest.json)
+
+Supported sites (content script runs on):
+- chatgpt.com / chat.openai.com
+- claude.ai
+- gemini.google.com
+- perplexity.ai
+
+How it works:
+- The extension does not compute confidence scores. It inserts text into the chat input so the model self-reports confidence and caveats.
+- Use "Append confidence request" before you send a question, or "Insert self-grade prompt" after a reply to ask the model to grade its previous message.
+- Customize the appended suffix under Extension options (puzzle icon → AI Self-Grade Assistant → options).
+
+Note: Some chat UIs use shadow DOM for the input; if the panel says it cannot find the input, click inside the chat box first or the site may have changed its markup.
