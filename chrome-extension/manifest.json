@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "AI Self-Grade Assistant",
-  "version": "1.1.0",
-  "description": "Adds self-assessment prompts so models report confidence and caveats—useful against overconfidence and hallucination risk.",
+  "name": "Caliber",
+  "version": "1.2.0",
+  "description": "Caliber adds honesty and calibration prompts in major AI chats—attachment checks, confidence cues, and self-audit snippets.",
   "permissions": ["storage"],
   "host_permissions": [
     "https://chat.openai.com/*",
@@ -32,6 +32,6 @@
   ],
   "options_page": "options.html",
   "action": {
-    "default_title": "AI Self-Grade Assistant — click for options"
+    "default_title": "Caliber — options"
   }
 }

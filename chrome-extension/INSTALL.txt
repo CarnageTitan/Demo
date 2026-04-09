@@ -1,19 +1,29 @@
-AI Self-Grade Assistant — load in Chrome
+Caliber — Chrome extension (load locally)
 
+What to “download”
+- You do not install Caliber from the Chrome Web Store unless a published package is linked there.
+- You need the **Caliber extension folder** on your computer: the directory named `chrome-extension` that contains **manifest.json** (everything inside that folder is required—do not download single files only).
+
+How to get that folder
+- **From GitHub**: open the repo → green **Code** → **Download ZIP** → unzip → use the inner `chrome-extension` folder.
+- **From git**: clone the repo, then use the `chrome-extension` path inside the clone.
+
+Load in Chrome
 1. Open chrome://extensions
-2. Turn on "Developer mode"
-3. Click "Load unpacked"
-4. Select this folder: chrome-extension (the one containing manifest.json)
+2. Turn on “Developer mode”
+3. Click “Load unpacked”
+4. Select the **chrome-extension** folder (the one whose icon shows manifest.json)
 
-Supported sites (content script runs on):
+After code changes, click **Reload** on Caliber’s card on chrome://extensions.
+
+Supported sites (Caliber’s panel appears on):
 - chatgpt.com / chat.openai.com
 - claude.ai
 - gemini.google.com
 - perplexity.ai
 
-How it works:
-- The extension cannot see your files or videos. It only inserts prompts so the model states whether it actually accessed attachments and flags ungrounded or fabricated details.
-- Panel actions: "Append full epistemic + confidence block" (before your question), "Insert media / file access check" (short block focused on video/audio/PDF honesty), "Insert self-grade + fabrication audit" (after a reply you distrust).
-- Options page: edit all three snippets or reset to defaults (puzzle icon → AI Self-Grade Assistant → options).
+Using Caliber
+- Panel buttons add prompts so the **chat model** (ChatGPT, Claude, etc.) states attachment access, calibration, and audits its prior reply. Caliber does not read your uploads itself.
+- Options: puzzle icon → **Caliber** → right-click → Options (or open from the panel link).
 
-Note: Some chat UIs use shadow DOM for the input; if the panel says it cannot find the input, click inside the chat box first or the site may have changed its markup.
+Note: Some chat sites hide the input in shadow DOM; if Caliber cannot find the box, click inside the chat input first.

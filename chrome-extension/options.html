@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>AI Self-Grade Assistant — Options</title>
+    <title>Caliber — Options</title>
     <style>
       body {
         font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -65,16 +65,16 @@
     </style>
   </head>
   <body>
-    <h1>AI Self-Grade Assistant</h1>
+    <h1>Caliber</h1>
     <p class="hint">
-      The extension cannot verify files or videos. These snippets only ask the <strong>model</strong> to state what it
+      Caliber cannot verify files or videos. These snippets only ask the <strong>chat model</strong> to state what it
       actually accessed and to flag ungrounded details—still not a guarantee against fabrication.
     </p>
-    <label for="suffix">“Append confidence request” — appended to composer</label>
+    <label for="suffix">“Caliber: epistemic + confidence block” — appended to composer</label>
     <textarea id="suffix" spellcheck="true" rows="14"></textarea>
-    <label for="selfGrade">“Insert self-grade prompt” — full message body</label>
+    <label for="selfGrade">“Caliber: reply audit” — full message body</label>
     <textarea id="selfGrade" spellcheck="true" rows="12"></textarea>
-    <label for="mediaCheck">“Insert media/file check” — appended to composer</label>
+    <label for="mediaCheck">“Caliber: media / file check” — appended to composer</label>
     <textarea id="mediaCheck" spellcheck="true" rows="8"></textarea>
     <button type="button" id="save">Save</button>
     <button type="button" id="reset" class="secondary">Reset all to defaults</button>

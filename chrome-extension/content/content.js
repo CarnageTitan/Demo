@@ -7,13 +7,13 @@
     return {
       suffixTemplate:
         D.suffixTemplate ||
-        "\n\n---\nAsk for calibrated confidence and a short Self-assessment after your answer.",
+        "\n\n---\n(Caliber) Ask for calibrated confidence and a short Self-assessment after your answer.",
       selfGradeTemplate:
         D.selfGradeTemplate ||
-        "Review your previous assistant message: confidence 0–100, caveats, hallucination check.",
+        "(Caliber) Review your previous assistant message: confidence 0–100, caveats, hallucination check.",
       mediaCheckTemplate:
         D.mediaCheckTemplate ||
-        "\n\n---\nState whether you actually processed the user’s attachment; if not, do not describe its contents.",
+        "\n\n---\n(Caliber) State whether you actually processed the user’s attachment; if not, do not describe its contents.",
     };
   }
 
@@ -183,15 +183,15 @@
     panel.id = PANEL_ID;
     panel.innerHTML = `
       <div class="asg-header" id="asg-drag">
-        <span class="asg-title">Self-Grade</span>
+        <span class="asg-title">Caliber</span>
         <button type="button" class="asg-toggle" id="asg-collapse" aria-expanded="true">Hide</button>
       </div>
       <div class="asg-body">
-        <p class="asg-note">Snippets ask the model to disclose access limits and ungrounded claims—they cannot verify your files. Use before sending questions or after a suspicious reply.</p>
+        <p class="asg-note">Caliber only adds text to your composer—it cannot see your files. Prompts ask the chat model to state what it accessed and flag weak or invented details.</p>
         <div class="asg-actions">
-          <button type="button" class="asg-btn asg-btn-primary" id="asg-insert-suffix">Append full epistemic + confidence block</button>
-          <button type="button" class="asg-btn" id="asg-media-check">Insert media / file access check</button>
-          <button type="button" class="asg-btn" id="asg-self-grade">Insert self-grade + fabrication audit</button>
+          <button type="button" class="asg-btn asg-btn-primary" id="asg-insert-suffix">Caliber: epistemic + confidence block</button>
+          <button type="button" class="asg-btn" id="asg-media-check">Caliber: media / file check</button>
+          <button type="button" class="asg-btn" id="asg-self-grade">Caliber: reply audit</button>
         </div>
         <p class="asg-label">Last detected assistant excerpt</p>
         <pre class="asg-preview" id="asg-preview">—</pre>
@@ -286,13 +286,13 @@
           "\n\n(I could not detect your last reply in the page DOM; still audit your previous message in this thread.)";
       }
       setComposerValue(composer, "\n\n" + block);
-      status.textContent = "Inserted self-grade prompt. Send it as your next message.";
+      status.textContent = "Caliber audit prompt inserted. Send it as your next message.";
     });
 
     function refreshPreview() {
       const ex = getLastAssistantExcerpt(800);
       const pre = panel.querySelector("#asg-preview");
-      pre.textContent = ex || "— none detected; self-grade prompt still asks the model to audit its prior reply.";
+      pre.textContent = ex || "— none detected; Caliber’s audit prompt still asks the model to review its prior reply.";
     }
     refreshPreview();
     const obs = new MutationObserver(() => refreshPreview());
