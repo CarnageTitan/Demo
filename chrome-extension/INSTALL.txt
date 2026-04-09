@@ -19,8 +19,10 @@ After code changes, click **Reload** on Caliber’s card on chrome://extensions.
 Supported sites (Caliber’s panel appears on):
 - chatgpt.com / chat.openai.com
 - claude.ai
-- gemini.google.com
+- gemini.google.com / www.gemini.google.com
 - perplexity.ai
+
+If nothing happens: Caliber only runs on those URLs. Open ChatGPT (or another site above), **reload the tab** after install, then look for the dark **Caliber** panel at the **bottom-right**. Click the Caliber toolbar icon for a quick reminder and links.
 
 Using Caliber
 - Panel buttons add prompts so the **chat model** (ChatGPT, Claude, etc.) states attachment access, calibration, and audits its prior reply. Caliber does not read your uploads itself.

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Caliber</title>
+    <style>
+      body {
+        width: 300px;
+        margin: 0;
+        padding: 14px 16px 16px;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        font-size: 13px;
+        line-height: 1.45;
+        color: #0f172a;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 15px;
+        font-weight: 700;
+      }
+      p {
+        margin: 0 0 10px;
+        color: #475569;
+      }
+      ul {
+        margin: 0 0 12px;
+        padding-left: 18px;
+        color: #334155;
+      }
+      a.site {
+        display: block;
+        padding: 8px 10px;
+        margin-bottom: 6px;
+        background: #f1f5f9;
+        border-radius: 8px;
+        color: #4f46e5;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      a.site:hover {
+        background: #e2e8f0;
+      }
+      a.subtle {
+        display: inline-block;
+        margin-top: 8px;
+        font-size: 12px;
+        color: #64748b;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Caliber</h1>
+    <p>
+      Caliber only appears <strong>inside</strong> supported AI chat pages. It does not run on Google, YouTube, or blank tabs.
+    </p>
+    <p><strong>1.</strong> Open one of these (click to open a new tab):</p>
+    <a class="site" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a>
+    <a class="site" href="https://claude.ai/" target="_blank" rel="noopener">Claude</a>
+    <a class="site" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a>
+    <a class="site" href="https://www.perplexity.ai/" target="_blank" rel="noopener">Perplexity</a>
+    <p><strong>2.</strong> After the chat loads, look for a dark <strong>Caliber</strong> panel at the <strong>bottom-right</strong>. Click a button there to paste prompts into the chat box, then send your message.</p>
+    <p><strong>3.</strong> If you just installed Caliber, <strong>refresh</strong> the chat tab (F5 or reload).</p>
+    <a class="subtle" id="opts" href="#">Extension options</a>
+    <script src="popup.js"></script>
+  </body>
+</html>

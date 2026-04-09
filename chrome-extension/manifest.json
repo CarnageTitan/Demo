@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Caliber",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Caliber adds honesty and calibration prompts in major AI chats—attachment checks, confidence cues, and self-audit snippets.",
   "permissions": ["storage"],
   "host_permissions": [
@@ -10,6 +10,7 @@
     "https://*.openai.com/*",
     "https://claude.ai/*",
     "https://gemini.google.com/*",
+    "https://www.gemini.google.com/*",
     "https://www.perplexity.ai/*",
     "https://perplexity.ai/*"
   ],
@@ -21,6 +22,7 @@
         "https://*.openai.com/*",
         "https://claude.ai/*",
         "https://gemini.google.com/*",
+        "https://www.gemini.google.com/*",
         "https://www.perplexity.ai/*",
         "https://perplexity.ai/*"
       ],
@@ -32,6 +34,7 @@
   ],
   "options_page": "options.html",
   "action": {
-    "default_title": "Caliber — options"
+    "default_title": "Caliber — open a supported chat site",
+    "default_popup": "popup.html"
   }
 }
