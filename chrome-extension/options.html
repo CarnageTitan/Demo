@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI Self-Grade Assistant — Options</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        max-width: 720px;
+        margin: 24px auto;
+        padding: 0 16px;
+        line-height: 1.5;
+        color: #0f172a;
+      }
+      h1 {
+        font-size: 1.25rem;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 180px;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+      p.hint {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 8px;
+      }
+      button {
+        margin-top: 16px;
+        padding: 10px 18px;
+        background: #4f46e5;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #4338ca;
+      }
+      button.secondary {
+        margin-left: 8px;
+        background: #64748b;
+      }
+      button.secondary:hover {
+        background: #475569;
+      }
+      label:not(:first-of-type) {
+        margin-top: 20px;
+      }
+      #status {
+        margin-top: 12px;
+        font-size: 13px;
+        color: #16a34a;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>AI Self-Grade Assistant</h1>
+    <p class="hint">
+      The extension cannot verify files or videos. These snippets only ask the <strong>model</strong> to state what it
+      actually accessed and to flag ungrounded details—still not a guarantee against fabrication.
+    </p>
+    <label for="suffix">“Append confidence request” — appended to composer</label>
+    <textarea id="suffix" spellcheck="true" rows="14"></textarea>
+    <label for="selfGrade">“Insert self-grade prompt” — full message body</label>
+    <textarea id="selfGrade" spellcheck="true" rows="12"></textarea>
+    <label for="mediaCheck">“Insert media/file check” — appended to composer</label>
+    <textarea id="mediaCheck" spellcheck="true" rows="8"></textarea>
+    <button type="button" id="save">Save</button>
+    <button type="button" id="reset" class="secondary">Reset all to defaults</button>
+    <p id="status"></p>
+    <script src="shared/defaults.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
