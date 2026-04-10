@@ -183,7 +183,7 @@
     panel.id = PANEL_ID;
     panel.innerHTML = `
       <div class="asg-header" id="asg-drag">
-        <span class="asg-title">Caliber</span>
+        <span class="asg-title">Caliber prompts</span>
         <button type="button" class="asg-toggle" id="asg-collapse" aria-expanded="true">Hide</button>
       </div>
       <div class="asg-body">

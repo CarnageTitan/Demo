@@ -1,4 +1,8 @@
-Caliber — Chrome extension (load locally)
+Caliber — Chat Prompts (Chrome extension, load locally)
+
+Not the same as “Caliber AI” on the Web Store
+- If your popup says “Confidence Score Overlay”, shield icon, or v1.0.0, that is a different extension. Uninstall it.
+- This project shows as “Caliber — Chat Prompts” in chrome://extensions and a simple popup with links to ChatGPT / Claude / Gemini / Perplexity.
 
 What to “download”
 - You do not install Caliber from the Chrome Web Store unless a published package is linked there.

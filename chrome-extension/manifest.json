@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Caliber",
-  "version": "1.2.1",
-  "description": "Caliber adds honesty and calibration prompts in major AI chats—attachment checks, confidence cues, and self-audit snippets.",
+  "name": "Caliber — Chat Prompts",
+  "version": "1.2.2",
+  "description": "Pastes honesty and calibration prompts into ChatGPT, Claude, Gemini, Perplexity—not a confidence overlay. Unrelated to store apps named “Caliber AI”.",
   "permissions": ["storage"],
   "host_permissions": [
     "https://chat.openai.com/*",
