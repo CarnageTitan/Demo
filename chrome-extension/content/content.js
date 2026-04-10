@@ -2,6 +2,27 @@
   const ROOT_ID = "ai-selfgrade-root";
   const PANEL_ID = "ai-selfgrade-panel";
 
+  let refreshObserver = null;
+  let remountTimer = null;
+  let domObserver = null;
+  let caliberDragState = null;
+
+  function ensureWindowDragHandlers() {
+    if (window.__caliberDragHandlers) return;
+    window.__caliberDragHandlers = true;
+    window.addEventListener("mousemove", (e) => {
+      const d = caliberDragState;
+      if (!d) return;
+      const dx = e.clientX - d.x;
+      const dy = e.clientY - d.y;
+      d.panel.style.left = Math.max(8, d.left + dx) + "px";
+      d.panel.style.top = Math.max(8, d.top + dy) + "px";
+    });
+    window.addEventListener("mouseup", () => {
+      caliberDragState = null;
+    });
+  }
+
   function getDefaults() {
     const D = typeof ASG_DEFAULTS !== "undefined" ? ASG_DEFAULTS : {};
     return {
@@ -173,25 +194,29 @@
     });
   }
 
-  function ensureRoot() {
-    if (document.getElementById(ROOT_ID)) return;
-    const root = document.createElement("div");
-    root.id = ROOT_ID;
-    document.documentElement.appendChild(root);
+  function disconnectRefreshObserver() {
+    if (refreshObserver) {
+      refreshObserver.disconnect();
+      refreshObserver = null;
+    }
+  }
 
+  function mountPanelIntoRoot(root) {
+    disconnectRefreshObserver();
+    root.textContent = "";
     const panel = document.createElement("div");
     panel.id = PANEL_ID;
     panel.innerHTML = `
       <div class="asg-header" id="asg-drag">
-        <span class="asg-title">Caliber prompts</span>
+        <span class="asg-title">Caliber AI</span>
         <button type="button" class="asg-toggle" id="asg-collapse" aria-expanded="true">Hide</button>
       </div>
       <div class="asg-body">
-        <p class="asg-note">Caliber only adds text to your composer—it cannot see your files. Prompts ask the chat model to state what it accessed and flag weak or invented details.</p>
+        <p class="asg-note">Adds prompts to your chat input only. If buttons fail, click inside the chat box first.</p>
         <div class="asg-actions">
-          <button type="button" class="asg-btn asg-btn-primary" id="asg-insert-suffix">Caliber: epistemic + confidence block</button>
-          <button type="button" class="asg-btn" id="asg-media-check">Caliber: media / file check</button>
-          <button type="button" class="asg-btn" id="asg-self-grade">Caliber: reply audit</button>
+          <button type="button" class="asg-btn asg-btn-primary" id="asg-insert-suffix">Epistemic + confidence block</button>
+          <button type="button" class="asg-btn" id="asg-media-check">Media / file check</button>
+          <button type="button" class="asg-btn" id="asg-self-grade">Reply audit</button>
         </div>
         <p class="asg-label">Last detected assistant excerpt</p>
         <pre class="asg-preview" id="asg-preview">—</pre>
@@ -209,25 +234,21 @@
       collapseBtn.setAttribute("aria-expanded", String(!collapsed));
     });
 
-    let drag = null;
+    ensureWindowDragHandlers();
     header.addEventListener("mousedown", (e) => {
       if (e.target.closest("button")) return;
-      drag = { x: e.clientX, y: e.clientY, left: panel.offsetLeft, top: panel.offsetTop };
+      caliberDragState = {
+        panel,
+        x: e.clientX,
+        y: e.clientY,
+        left: panel.offsetLeft,
+        top: panel.offsetTop,
+      };
       panel.style.left = panel.offsetLeft + "px";
       panel.style.top = panel.offsetTop + "px";
       panel.style.right = "auto";
       panel.style.bottom = "auto";
       e.preventDefault();
-    });
-    window.addEventListener("mousemove", (e) => {
-      if (!drag) return;
-      const dx = e.clientX - drag.x;
-      const dy = e.clientY - drag.y;
-      panel.style.left = Math.max(8, drag.left + dx) + "px";
-      panel.style.top = Math.max(8, drag.top + dy) + "px";
-    });
-    window.addEventListener("mouseup", () => {
-      drag = null;
     });
 
     panel.querySelector("#asg-options").addEventListener("click", (e) => {
@@ -286,24 +307,84 @@
           "\n\n(I could not detect your last reply in the page DOM; still audit your previous message in this thread.)";
       }
       setComposerValue(composer, "\n\n" + block);
-      status.textContent = "Caliber audit prompt inserted. Send it as your next message.";
+      status.textContent = "Audit prompt inserted. Send it as your next message.";
     });
 
     function refreshPreview() {
-      const ex = getLastAssistantExcerpt(800);
       const pre = panel.querySelector("#asg-preview");
-      pre.textContent = ex || "— none detected; Caliber’s audit prompt still asks the model to review its prior reply.";
+      if (!pre) return;
+      const ex = getLastAssistantExcerpt(800);
+      pre.textContent = ex || "— none detected; audit prompt still asks the model to review its prior reply.";
     }
     refreshPreview();
-    const obs = new MutationObserver(() => refreshPreview());
-    obs.observe(document.body, { childList: true, subtree: true, characterData: true });
-
+    refreshObserver = new MutationObserver(() => refreshPreview());
+    if (document.body) {
+      refreshObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
     loadSettings().then(() => refreshPreview());
   }
 
+  function isRootMounted() {
+    const root = document.getElementById(ROOT_ID);
+    return !!(root && document.body && document.body.contains(root));
+  }
+
+  function mountCaliber() {
+    if (!document.body) return;
+
+    let root = document.getElementById(ROOT_ID);
+    if (root && !document.body.contains(root)) {
+      try {
+        root.remove();
+      } catch (_) {}
+      root = null;
+    }
+    if (root && document.body.contains(root)) {
+      return;
+    }
+
+    root = document.createElement("div");
+    root.id = ROOT_ID;
+    document.body.appendChild(root);
+    mountPanelIntoRoot(root);
+  }
+
+  function scheduleRemountCheck() {
+    if (remountTimer !== null) return;
+    remountTimer = window.setTimeout(() => {
+      remountTimer = null;
+      if (!document.body) return;
+      if (!isRootMounted()) {
+        mountCaliber();
+        connectDomObserver();
+      }
+    }, 120);
+  }
+
+  function connectDomObserver() {
+    if (domObserver) {
+      domObserver.disconnect();
+    } else {
+      domObserver = new MutationObserver(() => scheduleRemountCheck());
+    }
+    domObserver.observe(document.documentElement, { childList: true, subtree: false });
+    if (document.body) {
+      domObserver.observe(document.body, { childList: true, subtree: false });
+    }
+  }
+
+  function startDomWatch() {
+    connectDomObserver();
+  }
+
+  function start() {
+    mountCaliber();
+    startDomWatch();
+  }
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", ensureRoot);
+    document.addEventListener("DOMContentLoaded", start);
   } else {
-    ensureRoot();
+    start();
   }
 })();

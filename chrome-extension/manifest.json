@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Caliber — Chat Prompts",
-  "version": "1.2.2",
-  "description": "Pastes honesty and calibration prompts into ChatGPT, Claude, Gemini, Perplexity—not a confidence overlay. Unrelated to store apps named “Caliber AI”.",
+  "name": "Caliber AI - ai self grade assistant",
+  "version": "1.3.0",
+  "description": "Unpacked prompt assistant: pastes self-grade and honesty snippets into ChatGPT, Claude, Gemini, Perplexity. Not the Chrome Web Store “Caliber AI” overlay app.",
   "permissions": ["storage"],
   "host_permissions": [
     "https://chat.openai.com/*",
@@ -34,7 +34,7 @@
   ],
   "options_page": "options.html",
   "action": {
-    "default_title": "Caliber — open a supported chat site",
+    "default_title": "Caliber AI — self-grade prompts",
     "default_popup": "popup.html"
   }
 }

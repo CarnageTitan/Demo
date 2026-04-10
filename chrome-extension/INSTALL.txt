@@ -1,35 +1,23 @@
-Caliber — Chat Prompts (Chrome extension, load locally)
+Caliber AI — ai self grade assistant (Chrome extension, load locally)
 
-Not the same as “Caliber AI” on the Web Store
-- If your popup says “Confidence Score Overlay”, shield icon, or v1.0.0, that is a different extension. Uninstall it.
-- This project shows as “Caliber — Chat Prompts” in chrome://extensions and a simple popup with links to ChatGPT / Claude / Gemini / Perplexity.
+Name in chrome://extensions: **Caliber AI - ai self grade assistant** (unpacked from this repo).
 
-What to “download”
-- You do not install Caliber from the Chrome Web Store unless a published package is linked there.
-- You need the **Caliber extension folder** on your computer: the directory named `chrome-extension` that contains **manifest.json** (everything inside that folder is required—do not download single files only).
+Not the same as the Web Store “Caliber AI” overlay (v1.0.0, different ID). This build pastes self-grade prompts; it does not draw confidence overlays on messages.
 
-How to get that folder
-- **From GitHub**: open the repo → green **Code** → **Download ZIP** → unzip → use the inner `chrome-extension` folder.
-- **From git**: clone the repo, then use the `chrome-extension` path inside the clone.
+What to download
+- Repo ZIP from GitHub → unzip → use the **chrome-extension** folder (contains manifest.json, content/, shared/).
 
 Load in Chrome
-1. Open chrome://extensions
-2. Turn on “Developer mode”
-3. Click “Load unpacked”
-4. Select the **chrome-extension** folder (the one whose icon shows manifest.json)
+1. chrome://extensions → Developer mode ON
+2. Load unpacked → select the **chrome-extension** folder
+3. After updates: **Reload** the extension, then refresh the chat tab
 
-After code changes, click **Reload** on Caliber’s card on chrome://extensions.
+Panel disappears after reload?
+- Chat sites often wipe the page DOM. This version re-attaches the panel when that happens. Use the latest **chrome-extension** from GitHub and reload the extension.
 
-Supported sites (Caliber’s panel appears on):
-- chatgpt.com / chat.openai.com
-- claude.ai
-- gemini.google.com / www.gemini.google.com
-- perplexity.ai
+Supported sites
+- chatgpt.com / chat.openai.com, claude.ai, gemini.google.com, perplexity.ai
 
-If nothing happens: Caliber only runs on those URLs. Open ChatGPT (or another site above), **reload the tab** after install, then look for the dark **Caliber** panel at the **bottom-right**. Click the Caliber toolbar icon for a quick reminder and links.
-
-Using Caliber
-- Panel buttons add prompts so the **chat model** (ChatGPT, Claude, etc.) states attachment access, calibration, and audits its prior reply. Caliber does not read your uploads itself.
-- Options: puzzle icon → **Caliber** → right-click → Options (or open from the panel link).
-
-Note: Some chat sites hide the input in shadow DOM; if Caliber cannot find the box, click inside the chat input first.
+Usage
+- Bottom-right **Caliber AI** panel: buttons paste into the chat input; you click **Send**.
+- If paste fails, click inside the chat box first.
