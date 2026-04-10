@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src.data_fetcher import fetch_yfinance, fetch_stock_fundamentals
 from src.quant_model import score_stock
+from src.backtest import run_monthly_backtest
 
 # Default watchlist: diversified large/mid caps across sectors
 DEFAULT_WATCHLIST = [
@@ -28,6 +29,68 @@ DEFAULT_WATCHLIST = [
     "INTC", "CRM", "ADBE", "CSCO", "PEP", "KO", "COST", "XOM", "CVX",
     "ABBV", "MRK", "TMO", "ABT", "LLY", "PFE", "BAC", "GS", "MS",
 ]
+
+
+def run_backtest_main(tickers: list, args) -> int:
+    """Monthly rebalance simulation; not predictive of live results."""
+    import pandas as pd
+
+    period = args.period if args.period in ("2y", "3y", "5y", "max") else "5y"
+    if args.period not in ("2y", "3y", "5y", "max"):
+        print(f"Note: Backtest uses period=5y (you passed {args.period!r}).")
+
+    bench = args.benchmark.upper()
+    fetch_list = list(dict.fromkeys(tickers + [bench, "^VIX"]))
+
+    print("=" * 60)
+    print("  RETAIL QUANT — Monthly backtest (research only)")
+    print("=" * 60)
+    print(f"Universe: {len(tickers)} names | Benchmark: {bench} | yfinance period: {period}")
+    print()
+
+    raw = fetch_yfinance(fetch_list, period=period)
+    if raw is None or raw.empty:
+        print("ERROR: Could not fetch price data.")
+        return 1
+
+    def series_for(sym: str, col: str) -> pd.Series:
+        if len(fetch_list) == 1:
+            return raw[col] if col in raw.columns else pd.Series(dtype=float)
+        if isinstance(raw.columns, pd.MultiIndex) and sym in raw.columns.get_level_values(0):
+            sub = raw[sym]
+            return sub[col] if col in sub.columns else pd.Series(dtype=float)
+        return pd.Series(dtype=float)
+
+    spy_s = series_for(bench, "Close")
+    vix_s = series_for("^VIX", "Close")
+
+    try:
+        res = run_monthly_backtest(
+            raw,
+            tickers,
+            spy_close=spy_s,
+            vix_close=vix_s if not args.no_regime else None,
+            use_regime=not args.no_regime,
+        )
+    except ValueError as e:
+        print(f"ERROR: {e}")
+        return 1
+
+    s = res.summary
+    print("Results (past data only; not financial advice):")
+    print(f"  Strategy total return: {s['total_return_strategy']*100:.1f}%")
+    print(f"  {bench} total return:     {s['total_return_spy']*100:.1f}%")
+    print(f"  Strategy CAGR:         {s['cagr_strategy']*100:.1f}%")
+    print(f"  {bench} CAGR:             {s['cagr_spy']*100:.1f}%")
+    print(f"  Strategy ann. vol:     {s['vol_ann_strategy']*100:.1f}%")
+    print(f"  Strategy Sharpe (raw): {s['sharpe_strategy']:.2f}")
+    print(f"  Max drawdown (strat):  {s['max_drawdown_strategy']*100:.1f}%")
+    print(f"  Max drawdown ({bench}):  {s['max_drawdown_spy']*100:.1f}%")
+    print(f"  Monthly rebalances:    {s['n_rebalances']}")
+    print()
+    print("Disclaimer: For education/research. Past performance does not guarantee future results.")
+    print("=" * 60)
+    return 0
 
 
 def get_prices_and_volumes(price_data, tickers: list, symbol: str):
@@ -83,10 +146,40 @@ def main():
         default="1y",
         help="History period for yfinance (default: 1y)",
     )
+    parser.add_argument(
+        "--backtest",
+        action="store_true",
+        help="Run monthly rebalance backtest vs SPY (uses longer history; price-only scores)",
+    )
+    parser.add_argument(
+        "--benchmark",
+        type=str,
+        default="SPY",
+        help="Benchmark ticker for backtest (default: SPY)",
+    )
+    parser.add_argument(
+        "--no-regime",
+        action="store_true",
+        help="Disable VIX-based equity scaling in backtest",
+    )
+    parser.add_argument(
+        "--portfolio",
+        action="store_true",
+        help="After screening, print suggested long-only weights (retail limits)",
+    )
+    parser.add_argument(
+        "--top-n",
+        type=int,
+        default=12,
+        help="Max names in portfolio weights (default: 12)",
+    )
     args = parser.parse_args()
 
     tickers = args.tickers if args.tickers else DEFAULT_WATCHLIST
     tickers = [t.upper() for t in tickers]
+
+    if args.backtest:
+        return run_backtest_main(tickers, args)
 
     print("=" * 60)
     print("  QUANT TRADING MODEL - Stock Buy Recommendations")
@@ -143,6 +236,41 @@ def main():
     strong = [x["symbol"] for x in scores if x["total_score"] >= 65]
     if strong:
         print(f"  Strong candidates (score >= 65): {', '.join(strong[:5])}")
+
+    if args.portfolio:
+        from src.portfolio import build_long_only_weights, sector_exposure
+        from src.regime import equity_multiplier, fetch_vix_close
+
+        sc_map = {x["symbol"]: x["total_score"] for x in scores}
+        sec_map = {
+            sym: (fundamentals.get(sym) or {}).get("sector") or "Unknown"
+            for sym in tickers
+        }
+        w = build_long_only_weights(
+            sc_map,
+            sectors=sec_map,
+            top_n=args.top_n,
+            max_position=0.12,
+            max_sector=0.40,
+            score_floor=45.0,
+        )
+        vx = fetch_vix_close()
+        mult = equity_multiplier(vx)
+        print()
+        eq_deployed = sum(w.values())
+        print("Suggested portfolio weights (long-only; per-name cap 12%, sector cap 40%):")
+        if vx is not None:
+            print(f"  VIX ~{vx:.1f} → scale listed % by {mult:.0%} (overlay cash = rest)")
+        for sym in sorted(w, key=w.get, reverse=True):
+            pct = w[sym] * mult * 100
+            print(f"  {sym:<6} {pct:5.2f}%  (pre-overlay {w[sym]*100:.2f}%)")
+        if w:
+            strat_cash = (1.0 - eq_deployed * mult) * 100
+            print(f"  Implied cash (strategy + overlay): {strat_cash:.1f}%")
+        print("  Sector mix (pre-overlay weights):")
+        for sec, ex in sector_exposure(w, sec_map).items():
+            print(f"    {sec}: {ex*100:.1f}%")
+
     print()
     print("Disclaimer: This is for research/education only. Not financial advice.")
     print("=" * 60)

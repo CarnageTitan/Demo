@@ -162,3 +162,23 @@ def score_stock(
     )
 
     return result
+
+
+def score_stock_price_only(
+    symbol: str,
+    prices: Optional[pd.Series],
+    volumes: Optional[pd.Series],
+) -> dict:
+    """
+    Same factor mix as score_stock but fixes value at neutral (50).
+    Use for historical simulation where point-in-time fundamentals are unavailable.
+    """
+    result = score_stock(symbol, prices, volumes, {})
+    result["value_score"] = 50.0
+    result["total_score"] = (
+        0.35 * 50.0
+        + 0.35 * result["momentum_score"]
+        + 0.15 * result["rsi_score"]
+        + 0.15 * result["volume_score"]
+    )
+    return result
