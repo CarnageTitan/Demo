@@ -2,15 +2,15 @@ const D = typeof ASG_DEFAULTS !== "undefined" ? ASG_DEFAULTS : {};
 
 const DEFAULT_SUFFIX =
   D.suffixTemplate ||
-  "\n\n---\nBefore you answer: for each major factual claim, add a short tag (confidence: High | Medium | Low). After your answer, add Self-assessment with calibration and caveats.";
+  "\n\n---\n(Caliber) Before you answer: for each major factual claim, add a short tag (confidence: High | Medium | Low). After your answer, add Self-assessment with calibration and caveats.";
 
 const DEFAULT_SELF_GRADE =
   D.selfGradeTemplate ||
-  "Review your previous assistant message. Give confidence 0–100, caveats, and hallucination check. Be concise.";
+  "(Caliber) Review your previous assistant message. Give confidence 0–100, caveats, and hallucination check. Be concise.";
 
 const DEFAULT_MEDIA =
   D.mediaCheckTemplate ||
-  "\n\n---\nState whether you actually processed the user’s attachment; if not, do not describe its contents.";
+  "\n\n---\n(Caliber) State whether you actually processed the user’s attachment; if not, do not describe its contents.";
 
 const suffixEl = document.getElementById("suffix");
 const selfGradeEl = document.getElementById("selfGrade");

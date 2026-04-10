@@ -1,19 +1,23 @@
-AI Self-Grade Assistant — load in Chrome
+Caliber AI — ai self grade assistant (Chrome extension, load locally)
 
-1. Open chrome://extensions
-2. Turn on "Developer mode"
-3. Click "Load unpacked"
-4. Select this folder: chrome-extension (the one containing manifest.json)
+Name in chrome://extensions: **Caliber AI - ai self grade assistant** (unpacked from this repo).
 
-Supported sites (content script runs on):
-- chatgpt.com / chat.openai.com
-- claude.ai
-- gemini.google.com
-- perplexity.ai
+Not the same as the Web Store “Caliber AI” overlay (v1.0.0, different ID). This build pastes self-grade prompts; it does not draw confidence overlays on messages.
 
-How it works:
-- The extension cannot see your files or videos. It only inserts prompts so the model states whether it actually accessed attachments and flags ungrounded or fabricated details.
-- Panel actions: "Append full epistemic + confidence block" (before your question), "Insert media / file access check" (short block focused on video/audio/PDF honesty), "Insert self-grade + fabrication audit" (after a reply you distrust).
-- Options page: edit all three snippets or reset to defaults (puzzle icon → AI Self-Grade Assistant → options).
+What to download
+- Repo ZIP from GitHub → unzip → use the **chrome-extension** folder (contains manifest.json, content/, shared/).
 
-Note: Some chat UIs use shadow DOM for the input; if the panel says it cannot find the input, click inside the chat box first or the site may have changed its markup.
+Load in Chrome
+1. chrome://extensions → Developer mode ON
+2. Load unpacked → select the **chrome-extension** folder
+3. After updates: **Reload** the extension, then refresh the chat tab
+
+Panel disappears after reload?
+- Chat sites often wipe the page DOM. This version re-attaches the panel when that happens. Use the latest **chrome-extension** from GitHub and reload the extension.
+
+Supported sites
+- chatgpt.com / chat.openai.com, claude.ai, gemini.google.com, perplexity.ai
+
+Usage
+- Bottom-right **Caliber AI** panel: buttons paste into the chat input; you click **Send**.
+- If paste fails, click inside the chat box first.
